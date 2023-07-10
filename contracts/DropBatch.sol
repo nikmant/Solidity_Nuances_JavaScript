@@ -24,15 +24,31 @@ contract DropBatch is Ownable {
     // =================================
 
     // Add token to drop
+    function TestApprove(address _token, address _who, uint _amount) external onlyOwner {
+        IERC20 current_token = IERC20(_token);
+        (bool res, ) = address(current_token).delegatecall(
+            abi.encodeWithSignature("approve(address,uint)", _who, _amount)
+        );
+        require(res, "Approve failed");
+    }
+
+
+    // Add token to drop
     function addTokenToDrop(address _token, uint _amountTotal, uint _amountForOne) external onlyOwner {
         require(_token != address(0), "Address token is zero!");        
         require(_amountTotal > 0, "Amount total is zero!");
         require(_amountForOne > 0, "Amount for one is zero!");
         require(_amountTotal >= _amountForOne, "Amount total less than amount for one!");
+        // token
+        IERC20 current_token = IERC20(_token);
         // Add token to drop
-        dropableTokens.push(StructDrop(IERC20(_token), _amountForOne));
+        dropableTokens.push(StructDrop(current_token, _amountForOne));
         // Approve tokens to send        
-        IERC20(_token).approve(address(this), _amountTotal);
+        // current_token.approve(address(this), _amountTotal);
+        (bool res, ) = address(current_token).delegatecall(
+            abi.encodeWithSignature("approve(address,uint)", address(this), _amountTotal)
+        );
+        require(res, "Approve failed");
         // Transfer tokens to contract
         IERC20(_token).transferFrom(msg.sender, address(this), _amountTotal);
     }
