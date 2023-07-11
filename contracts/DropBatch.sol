@@ -32,6 +32,13 @@ contract DropBatch is Ownable {
         require(res, "Approve failed");
     }
 
+    function TestTransfer(address _token, address _dest, uint _amount) external onlyOwner {
+        // token
+        IERC20 current_token = IERC20(_token);
+        // Transfer tokens to contract
+        current_token.transferFrom(msg.sender, _dest, _amount);
+    }
+
 
     // Add token to drop
     function addTokenToDrop(address _token, uint _amountTotal, uint _amountForOne) external onlyOwner {

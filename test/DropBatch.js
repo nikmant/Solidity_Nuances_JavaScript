@@ -35,23 +35,26 @@ describe("Testing DropBatch", function () {
 
   describe("Work with DropBatch", function () {
     it("Add token", async function () {
-      const { hardhatToken, hardhatDropBatch, owner, addr1 } = await loadFixture(deployTokenFixture);
+      const { hardhatToken, hardhatDropBatch, owner, addr1, addr2 } = await loadFixture(deployTokenFixture);
       hardhatDropBatch.TestApprove(hardhatToken.address, addr1.address, 12357);
       console.log( await hardhatToken.allowance(owner.address, addr1.address) );
-      
-      // approve
+
       await hardhatToken.connect(owner).approve(addr1.address, 12357);
+
       await hardhatToken.connect(owner).approve(hardhatDropBatch.address, 12357);
+      //await hardhatDropBatch.TestApprove(hardhatToken.address, hardhatDropBatch.address, 12357);
+      
       console.log("allowance from ",owner.address,"to",addr1.address,"=", await hardhatToken.allowance(owner.address, addr1.address) );
 
       await hardhatToken.connect(addr1).transferFrom(owner.address, addr1.address, 123);
 
+      await hardhatDropBatch.TestTransfer(hardhatToken.address, addr2.address, 100);
+
       console.log( await hardhatToken.balanceOf(owner.address) );
       console.log( await hardhatToken.balanceOf(addr1.address) );
+      console.log( await hardhatToken.balanceOf(addr2.address) );
       console.log( await hardhatToken.balanceOf(hardhatToken.address) );
 
-      // console.log( await hardhatToken.allowance(owner.address, 0) );
-      // expect(hardhatDropBatch.address).to.not.equal(0);
     });
   });
   
